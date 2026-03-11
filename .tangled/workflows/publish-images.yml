@@ -1,8 +1,10 @@
 event:
   - push
+  - manual
 branch:
   - main
   - test
+engine: "nixery"
 dependencies:
   nixpkgs:
     - buildah
