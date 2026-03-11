@@ -12,17 +12,19 @@ environment:
 steps:
   - name: "Authenticate with Docker Hub"
     command: |
-      buildah login --authfile /tmp/auth.json -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" docker.io
+      mkdir -p /etc
+      echo "root:x:0:0:root:/root:/bin/sh" > /etc/passwd
+      buildah login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" docker.io
   - name: "Build and Push: baselayer"
     command: |
       buildah bud -t docker.io/$DOCKER_USERNAME/baselayer:latest -f baselayer/Dockerfile baselayer/
-      buildah push --authfile /tmp/auth.json docker.io/$DOCKER_USERNAME/baselayer:latest
+      buildah push docker.io/$DOCKER_USERNAME/baselayer:latest
   - name: "Build and Push: devbox base"
     command: |
       for base in devctr sshd coder; do
         echo "Building devbox:$base..."
         buildah bud -t docker.io/$DOCKER_USERNAME/devbox:$base-latest -f devbox/$base/Dockerfile devbox/$base/
-        buildah push --authfile /tmp/auth.json docker.io/$DOCKER_USERNAME/devbox:$base-latest
+        buildah push docker.io/$DOCKER_USERNAME/devbox:$base-latest
       done
   - name: "Build and Push: devbox variants"
     command: |
@@ -34,6 +36,6 @@ steps:
             --build-arg BASE_TAG=$base-latest \
             -t docker.io/$DOCKER_USERNAME/$variant:$base-latest \
             -f $variant/Dockerfile $variant/
-          buildah push --authfile /tmp/auth.json docker.io/$DOCKER_USERNAME/$variant:$base-latest
+          buildah push docker.io/$DOCKER_USERNAME/$variant:$base-latest
         done
       done
