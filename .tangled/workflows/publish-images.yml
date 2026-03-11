@@ -14,6 +14,11 @@ environment:
 steps:
   - name: "Configure Docker Auth"
     command: |
+      if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
+        echo "ERROR: Docker credentials are empty."
+        echo "Ensure secrets are named correctly and added specifically to the voidxela/baselayer repo."
+        exit 1
+      fi
       auth=$(echo -n "$DOCKER_USERNAME:$DOCKER_PASSWORD" | base64 | tr -d '\n')
       mkdir -p /kaniko/.docker
       cat <<EOF > /kaniko/.docker/config.json
