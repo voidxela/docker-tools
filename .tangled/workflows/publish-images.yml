@@ -7,57 +7,44 @@ engine: "nixery"
 dependencies:
   nixpkgs:
     - kaniko
+    - skopeo
     - cacert
-    - coreutils
 environment:
   DOCKER_USERNAME: "voidxela"
 steps:
-  - name: "Configure Docker Auth"
-    command: |
-      if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
-        echo "ERROR: Docker credentials are empty."
-        echo "Ensure secrets are named correctly and added specifically to the voidxela/baselayer repo."
-        exit 1
-      fi
-      auth=$(printf "%s:%s" "$DOCKER_USERNAME" "$DOCKER_PASSWORD" | base64 | tr -d '\n')
-      mkdir -p /kaniko/.docker
-      cat <<EOF > /kaniko/.docker/config.json
-      {
-        "auths": {
-          "https://index.docker.io/v1/": { "auth": "$AUTH" },
-          "index.docker.io": { "auth": "$AUTH" },
-          "docker.io": { "auth": "$AUTH" }
-        }
-      }
-      EOF
   - name: "Build and Push: baselayer"
     command: |
       executor \
         --verbosity debug \
         --context baselayer \
         --dockerfile baselayer/Dockerfile \
-        --destination docker.io/$DOCKER_USERNAME/baselayer:latest \
+        --no-push \
+        --tar-path baselayer.tar \
         --force
-  - name: "Build and Push: devbox base"
-    command: |
-      for base in devctr sshd coder; do
-        echo "Building devbox:$base..."
-        executor \
-          --context devbox/$base \
-          --dockerfile devbox/$base/Dockerfile \
-          --destination docker.io/$DOCKER_USERNAME/devbox:$base-latest \
-          --force
-      done
-  - name: "Build and Push: devbox variants"
-    command: |
-      variants=($(ls | grep devbox-))
-      for variant in ${variants[@]}; do
-        for base in devctr sshd coder; do
-          echo "Building $variant:$base..."
-          executor \
-            --context $variant \
-            --dockerfile $variant/Dockerfile \
-            --destination docker.io/$DOCKER_USERNAME/$variant:$base-latest \
-            --force
-        done
-      done
+      skopeo copy \
+        docker-archive:baselayer.tar \
+        docker://docker.io/voidxela/baselayer:latest \
+        --dest-creds "$DOCKER_USERNAME:$DOCKER_PASSWORD"
+  # - name: "Build and Push: devbox base"
+  #   command: |
+  #     for base in devctr sshd coder; do
+  #       echo "Building devbox:$base..."
+  #       executor \
+  #         --context devbox/$base \
+  #         --dockerfile devbox/$base/Dockerfile \
+  #         --destination docker.io/$DOCKER_USERNAME/devbox:$base-latest \
+  #         --force
+  #     done
+  # - name: "Build and Push: devbox variants"
+  #   command: |
+  #     variants=($(ls | grep devbox-))
+  #     for variant in ${variants[@]}; do
+  #       for base in devctr sshd coder; do
+  #         echo "Building $variant:$base..."
+  #         executor \
+  #           --context $variant \
+  #           --dockerfile $variant/Dockerfile \
+  #           --destination docker.io/$DOCKER_USERNAME/$variant:$base-latest \
+  #           --force
+  #       done
+  #     done
