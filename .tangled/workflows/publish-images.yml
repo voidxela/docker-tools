@@ -19,7 +19,7 @@ steps:
         echo "Ensure secrets are named correctly and added specifically to the voidxela/baselayer repo."
         exit 1
       fi
-      auth=$(echo -n "$DOCKER_USERNAME:$DOCKER_PASSWORD" | base64 | tr -d '\n')
+      auth=$(printf "%s:%s" "$DOCKER_USERNAME" "$DOCKER_PASSWORD" | base64 | tr -d '\n')
       mkdir -p /kaniko/.docker
       cat <<EOF > /kaniko/.docker/config.json
       {
