@@ -8,13 +8,16 @@ dependencies:
   nixpkgs:
     - kaniko
     - cacert
+    - coreutils
 environment:
   DOCKER_USERNAME: "voidxela"
+  DOCKER_CONFIG: /tmp/docker
 steps:
   - name: "Configure Docker Auth"
     command: |
-      mkdir -p ~/.docker
-      echo "{\"auths\":{\"docker.io\":{\"username\":\"$DOCKER_USERNAME\",\"password\":\"$DOCKER_PASSWORD\"}}}" > ~/.docker/config.json
+      auth=$(echo -n "$DOCKER_USERNAME:$DOCKER_PASSWORD" | base64 | tr -d '\n')
+      mkdir -p "$DOCKER_CONFIG"
+      echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$AUTH\"}}}" > $DOCKER_CONFIG/config.json
   - name: "Build and Push: baselayer"
     command: |
       executor \
