@@ -21,6 +21,7 @@ steps:
   - name: "Build and Push: baselayer"
     command: |
       executor \
+        --verbosity debug \
         --context baselayer \
         --dockerfile baselayer/Dockerfile \
         --destination docker.io/$DOCKER_USERNAME/baselayer:latest \
