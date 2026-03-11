@@ -17,7 +17,15 @@ steps:
     command: |
       auth=$(echo -n "$DOCKER_USERNAME:$DOCKER_PASSWORD" | base64 | tr -d '\n')
       mkdir -p "$DOCKER_CONFIG"
-      echo "{\"auths\":{\"docker.io\":{\"auth\":\"$AUTH\"}}}" > $DOCKER_CONFIG/config.json
+      cat <<EOF > $DOCKER_CONFIG/config.json
+      {
+        "auths": {
+          "https://index.docker.io/v1/": { "auth": "$AUTH" },
+          "index.docker.io": { "auth": "$AUTH" },
+          "docker.io": { "auth": "$AUTH" }
+        }
+      }
+      EOF
   - name: "Build and Push: baselayer"
     command: |
       executor \
