@@ -1,0 +1,23 @@
+#!/command/with-contenv bash
+
+TARGET_PUID=${PUID:-1000}
+TARGET_PGID=${PGID:-1000}
+
+echo "[init-adduser] Configuring dev user with PUID=$TARGET_PUID and PGID=$TARGET_PGID"
+
+if ! getent group dev >/dev/null; then
+    groupadd -g "$TARGET_PGID" dev
+else
+    groupmod -g "$TARGET_PGID" dev
+fi
+
+if ! getent passwd dev >/dev/null; then
+    useradd -u "$TARGET_PUID" -g "$TARGET_PGID" -m -s /bin/bash dev
+else
+    usermod -u "$TARGET_PUID" -g "$TARGET_PGID" dev
+fi
+
+mkdir -p /workspace
+chown -R dev:dev /workspace
+
+echo "[init-adduser] User configuration complete."
