@@ -11,13 +11,12 @@ dependencies:
     - coreutils
 environment:
   DOCKER_USERNAME: "voidxela"
-  DOCKER_CONFIG: /tmp/docker
 steps:
   - name: "Configure Docker Auth"
     command: |
       auth=$(echo -n "$DOCKER_USERNAME:$DOCKER_PASSWORD" | base64 | tr -d '\n')
-      mkdir -p "$DOCKER_CONFIG"
-      cat <<EOF > $DOCKER_CONFIG/config.json
+      mkdir -p ~/.docker
+      cat <<EOF > ~/.docker/config.json
       {
         "auths": {
           "https://index.docker.io/v1/": { "auth": "$AUTH" },
