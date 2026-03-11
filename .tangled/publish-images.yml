@@ -2,6 +2,7 @@ event:
   - push
 branch:
   - main
+  - test
 dependencies:
   nixpkgs:
     - buildah
