@@ -1,0 +1,18 @@
+event:
+  - push
+branch:
+  - main
+  - test
+engine: "nixery"
+dependencies:
+  nixpkgs:
+    - git
+environment:
+  GH_USERNAME: "voidxela"
+  GH_REPO: "docker-tools"
+steps:
+  - name: "Mirror to GitHub"
+    command: |
+      git remote set-url origin \
+        https://${GH_USERNAME}:${GH_PASSWORD}@://github.com/${GH_USERNAME}/${GH_REPO}.git
+      git push --mirror
