@@ -14,5 +14,5 @@ steps:
   - name: "Mirror to GitHub"
     command: |
       git remote set-url origin \
-        https://${GH_USERNAME}:${GH_PASSWORD}@://github.com/${GH_USERNAME}/${GH_REPO}.git
+        "https://${GH_USERNAME}:${GH_PASSWORD}@://github.com/${GH_USERNAME}/${GH_REPO}.git"
       git push --mirror
