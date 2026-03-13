@@ -15,5 +15,5 @@ steps:
       git clone --mirror "${TANGLED_REPO_URL}"
       cd "${TANGLED_REPO_NAME}.git"
       git remote set-url origin \
-        "https://${GH_USERNAME}:${GH_PASSWORD}@://github.com/${GH_USERNAME}/${TANGLED_REPO_NAME}.git"
+        "https://${GH_USERNAME}:${GH_PASSWORD}@github.com/${GH_USERNAME}/${TANGLED_REPO_NAME}.git"
       git push --mirror
