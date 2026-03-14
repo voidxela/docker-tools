@@ -1,19 +1,2 @@
-#!/bin/bash
-TARGET_PUID=$(cat /var/run/s6/container_environment/PUID 2>/dev/null || echo "1000")
-TARGET_PGID=$(cat /var/run/s6/container_environment/PGID 2>/dev/null || echo "1000")
-TARGET_USERNAME=$(cat /var/run/s6/container_environment/USERNAME 2>/dev/null || echo "user")
-
-echo "[init-adduser] Configuring '$USERNAME' user with PUID=$TARGET_PUID and PGID=$TARGET_PGID"
-if ! getent group "$USERNAME" >/dev/null; then
-    groupadd -g "$TARGET_PGID" "$USERNAME"
-else
-    groupmod -g "$TARGET_PGID" "$USERNAME"
-fi
-if ! getent passwd "$USERNAME" >/dev/null; then
-    useradd -u "$TARGET_PUID" -g "$TARGET_PGID" -m -s /bin/bash "$USERNAME"
-else
-    usermod -u "$TARGET_PUID" -g "$TARGET_PGID" "$USERNAME"
-fi
-mkdir -p /workspace
-chown -R "$USERNAME:$USERNAME" /workspace
-echo "[init-adduser] User configuration complete."
+with-contenv
+/bin/bash /etc/s6-overlay/scripts/init-adduser.sh
