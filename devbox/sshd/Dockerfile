@@ -1,5 +1,5 @@
 ARG build_version=latest
-FROM ghcr.io/voidxela/baselayer:${build_version}
+FROM ghcr.io/voidxela/docker-tools/baselayer:${build_version}
 
 ENV USERNAME dev
 RUN dnf install -y sudo openssh-server \
