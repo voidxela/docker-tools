@@ -1,2 +1,2 @@
-#!/command/with-contenv bash
-exec sleep infinity
+#!/command/execlineb -P
+sleep infinity
