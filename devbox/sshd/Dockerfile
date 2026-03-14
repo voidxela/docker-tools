@@ -1,6 +1,8 @@
-FROM voidxela/baselayer:latest
+ARG build_version=latest
+FROM ghcr.io/voidxela/baselayer:${build_version}
 
-RUN dnf install -y openssh-server \
+ENV USERNAME dev
+RUN dnf install -y sudo openssh-server \
   && dnf clean all \
   && ssh-keygen -A \
   && mkdir -p /run/sshd

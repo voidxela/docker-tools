@@ -11,6 +11,7 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
   && rm -rf /tmp/s6-overlay-*.tar.xz
 ENV PUID=1000
 ENV PGID=1000
+ENV USERNAME=user
 COPY root/ /
 WORKDIR /workspace
 ENTRYPOINT ["/init"]

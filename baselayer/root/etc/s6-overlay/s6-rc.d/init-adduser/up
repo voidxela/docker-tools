@@ -2,22 +2,23 @@
 
 TARGET_PUID=${PUID:-1000}
 TARGET_PGID=${PGID:-1000}
+TARGET_USERNAME=${USERNAME:-user}
 
-echo "[init-adduser] Configuring dev user with PUID=$TARGET_PUID and PGID=$TARGET_PGID"
+echo "[init-adduser] Configuring '$TARGET_USERNAME' user with PUID=$TARGET_PUID and PGID=$TARGET_PGID"
 
-if ! getent group dev >/dev/null; then
-    groupadd -g "$TARGET_PGID" dev
+if ! getent group "$TARGET_USERNAME" >/dev/null; then
+    groupadd -g "$TARGET_PGID" "$TARGET_USERNAME"
 else
-    groupmod -g "$TARGET_PGID" dev
+    groupmod -g "$TARGET_PGID" "$TARGET_USERNAME"
 fi
 
-if ! getent passwd dev >/dev/null; then
-    useradd -u "$TARGET_PUID" -g "$TARGET_PGID" -m -s /bin/bash dev
+if ! getent passwd "$TARGET_USERNAME" >/dev/null; then
+    useradd -u "$TARGET_PUID" -g "$TARGET_PGID" -m -s /bin/bash "$TARGET_USERNAME"
 else
-    usermod -u "$TARGET_PUID" -g "$TARGET_PGID" dev
+    usermod -u "$TARGET_PUID" -g "$TARGET_PGID" "$TARGET_USERNAME"
 fi
 
 mkdir -p /workspace
-chown -R dev:dev /workspace
+chown -R "$TARGET_USERNAME:$TARGET_USERNAME" /workspace
 
 echo "[init-adduser] User configuration complete."

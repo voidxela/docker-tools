@@ -1,5 +1,6 @@
-ARG BASE_TAG=devctr-latest
-FROM voidxela/devbox:${BASE_TAG}
+ARG build_version=latest
+ARG build_variant=devctr
+FROM voidxela/devbox-${build_variant}:${build_version}
 
 RUN dnf install -y golang make gcc g++ \
   && dnf clean all
